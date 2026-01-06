@@ -1,326 +1,3 @@
-/*
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../api/axiosConfig";
-
-function AdminRequests() {
-  const [requests, setRequests] = useState([]);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchAllRequests = async () => {
-      try {
-        const res = await api.get("/api/admin/ewaste/all");
-        setRequests(res.data);
-      } catch (err) {
-        setError(err.response?.data || "Failed to load requests");
-      }
-    };
-    fetchAllRequests();
-  }, []);
-
-  return (
-    <div className="container mt-4">
-      <h3>All E-Waste Requests</h3>
-      <hr />
-
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <table className="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>User</th>
-            <th>Item</th>
-            <th>Quantity</th>
-            <th>Status</th>
-            <th>Image</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          {requests.map((r) => (
-            <tr key={r.id}>
-              <td>{r.userName}</td>
-              <td>{r.itemName}</td>
-              <td>{r.quantity}</td>
-              <td>
-                <span className="badge bg-info">{r.status}</span>
-              </td>
-              <td>
-                {r.imageUrl && (
-                  <img
-                    src={r.imageUrl}
-                    alt="ewaste"
-                    width="80"
-                    height="60"
-                  />
-                )}
-              </td>
-              <td>
-                {r.status === "REQUESTED" ? (
-                  <Link
-                    to={`/admin/assign/${r.id}`}
-                    className="btn btn-sm btn-success"
-                  >
-                    Assign Pickup
-                  </Link>
-                ) : (
-                  <span className="text-muted">Assigned</span>
-                )}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-  );
-}
-
-export default AdminRequests;
-*/
-
-/*imp
-
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../api/axiosConfig";
-
-function AdminRequests() {
-  const [requests, setRequests] = useState([]);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    const fetchAllRequests = async () => {
-      try {
-        const res = await api.get("/api/admin/ewaste/all");
-        setRequests(res.data);
-      } catch (err) {
-        setError(err.response?.data || "Failed to load requests");
-      }
-    };
-    fetchAllRequests();
-  }, []);
-
-  return (
-    <div className="container mt-4">
-      <h3>All E-Waste Requests (Admin)</h3>
-      <hr />
-
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <div className="row">
-        {requests.map((r) => (
-          <div key={r.id} className="col-md-6 mb-4">
-            <div className="card h-100 shadow-sm">
-              <div className="card-body">
-                <h5 className="card-title">
-                  {r.deviceType} - {r.brand} {r.model}
-                </h5>
-
-               <p>
-  <strong>User:</strong> {r.userName}
-  <br />
-  <small className="text-muted">{r.userEmail}</small>
-</p>
-
-                <p><strong>Condition:</strong> {r.condition}</p>
-                <p><strong>Quantity:</strong> {r.quantity}</p>
-                <p><strong>Pickup Address:</strong> {r.pickupAddress}</p>
-                <p><strong>Remarks:</strong> {r.remarks}</p>
-
-                <p>
-                  <strong>Status:</strong>{" "}
-                  <span className="badge bg-info">{r.status}</span>
-                </p>
-
-                {r.pickupDate && (
-                  <p>
-                    <strong>Pickup Date:</strong>{" "}
-                    {new Date(r.pickupDate).toLocaleString()}
-                  </p>
-                )}
-
-                {r.assignedStaff && (
-                  <p><strong>Assigned Staff:</strong> {r.assignedStaff}</p>
-                )}
-
-                {r.imageBase64 && (
-                  <img
-                    src={`data:image/*;base64,${r.imageBase64}`}
-                    alt="E-waste"
-                    className="img-fluid mt-2 rounded"
-                    style={{ maxHeight: "200px" }}
-                  />
-                )}
-                
-
-                <div className="mt-3">
-                  {r.status === "SUBMITTED" ? (
-                    <Link
-                      to={`/admin/assign/${r.id}`}
-                      className="btn btn-sm btn-success"
-                    >
-                      Assign Pickup
-                    </Link>
-                  ) : (
-                    <span className="text-muted">Already Processed</span>
-                  )}
-                </div>
-
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default AdminRequests;
-*/
-
-/*
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import api from "../api/axiosConfig";
-
-const STATUS_OPTIONS = [
-  "SUBMITTED",
-  "APPROVED",
-  "SCHEDULED",
-  "PICKED",
-  "COMPLETED",
-  "CANCELLED"
-];
-
-function AdminRequests() {
-  const [requests, setRequests] = useState([]);
-  const [error, setError] = useState("");
-
-  useEffect(() => {
-    fetchAllRequests();
-  }, []);
-
-  const fetchAllRequests = async () => {
-    try {
-      const res = await api.get("/api/admin/ewaste/all");
-      setRequests(res.data);
-    } catch (err) {
-      setError("Failed to load requests");
-    }
-  };
-
-  const updateStatus = async (id, newStatus) => {
-    try {
-      await api.put(`/api/admin/ewaste/update-status/${id}`, {
-        status: newStatus
-      });
-
-      // 🔄 Update UI instantly
-      setRequests(prev =>
-        prev.map(r =>
-          r.id === id ? { ...r, status: newStatus } : r
-        )
-      );
-    } catch (err) {
-      alert("Failed to update status");
-    }
-  };
-
-  return (
-    <div className="container mt-4">
-      <h3>All E-Waste Requests (Admin)</h3>
-      <hr />
-
-      {error && <div className="alert alert-danger">{error}</div>}
-
-      <div className="row">
-        {requests.map((r) => (
-          <div key={r.id} className="col-md-6 mb-4">
-            <div className="card h-100 shadow-sm">
-              <div className="card-body">
-                <h5 className="card-title">
-                  {r.deviceType} - {r.brand} {r.model}
-                </h5>
-
-                <p>
-                  <strong>User:</strong> {r.userName}
-                  <br />
-                  <small className="text-muted">{r.userEmail}</small>
-                </p>
-
-                <p><strong>Condition:</strong> {r.condition}</p>
-                <p><strong>Quantity:</strong> {r.quantity}</p>
-                <p><strong>Pickup Address:</strong> {r.pickupAddress}</p>
-                <p><strong>Remarks:</strong> {r.remarks}</p>
-
-              
-                <div className="mb-2">
-                  <strong>Status:</strong>
-                  <select
-                    className="form-select mt-1"
-                    value={r.status}
-                    onChange={(e) => updateStatus(r.id, e.target.value)}
-                  >
-                    {STATUS_OPTIONS.map(status => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                {r.pickupDate && (
-                  <p>
-                    <strong>Pickup Date:</strong>{" "}
-                    {new Date(r.pickupDate).toLocaleString()}
-                  </p>
-                )}
-
-               {r.pickupPerson && (
-  <p>
-    <strong>Pickup Person:</strong> {r.pickupPerson.name}
-    <br />
-    <small className="text-muted">{r.pickupPerson.email}</small>
-  </p>
-)}
-
-
-                {r.imageBase64 && (
-                  <img
-                    src={`data:image/*;base64,${r.imageBase64}`}
-                    alt="E-waste"
-                    className="img-fluid mt-2 rounded"
-                    style={{ maxHeight: "200px" }}
-                  />
-                )}
-
-             
-                <div className="mt-3">
-                  {r.status === "SUBMITTED" ? (
-                    <Link
-                      to={`/admin/assign/${r.id}`}
-                      className="btn btn-sm btn-success"
-                    >
-                      Assign Pickup
-                    </Link>
-                  ) : (
-                    <span className="text-muted">Already Processed</span>
-                  )}
-                </div>
-
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-export default AdminRequests;
-*/
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
@@ -333,109 +10,265 @@ const STATUS_FLOW = {
   PICKED: ["COMPLETED"]
 };
 
+const STATUS_LIST = [
+  "ALL",
+  "SUBMITTED",
+  "APPROVED",
+  "SCHEDULED",
+  "PICKED",
+  "COMPLETED",
+  "CANCELLED"
+];
+
+const statusColor = {
+  SUBMITTED: "secondary",
+  APPROVED: "primary",
+  SCHEDULED: "warning",
+  PICKED: "info",
+  COMPLETED: "success",
+  CANCELLED: "danger"
+};
+
 function AdminRequests() {
   const [requests, setRequests] = useState([]);
-  const [error, setError] = useState("");
+  const [statusFilter, setStatusFilter] = useState("ALL");
+  const [search, setSearch] = useState("");
+  const [view, setView] = useState("card");
+  const [modalImage, setModalImage] = useState(null);
 
   useEffect(() => {
-    fetchAllRequests();
+    const fetchRequests = async () => {
+      try {
+        const res = await api.get("/api/admin/ewaste/all");
+        setRequests(res.data.slice().reverse());
+      } catch (err) {
+        console.error("Failed to fetch requests", err);
+      }
+    };
+    fetchRequests();
   }, []);
 
-  const fetchAllRequests = async () => {
-    try {
-      const res = await api.get("/api/admin/ewaste/all");
-       setRequests(res.data.slice().reverse());
-    } catch {
-      setError("Failed to load requests");
-    }
+  const updateStatus = async (id, status) => {
+    if (!status) return;
+    await api.put(`/api/admin/ewaste/update-status/${id}`, { status });
+    setRequests(prev =>
+      prev.map(r => (r.id === id ? { ...r, status } : r))
+    );
   };
 
-  const updateStatus = async (id, newStatus) => {
-    try {
-      await api.put(`/api/admin/ewaste/update-status/${id}`, {
-        status: newStatus
-      });
-
-      setRequests(prev =>
-        prev.map(r =>
-          r.id === id ? { ...r, status: newStatus } : r
-        )
-      );
-    } catch {
-      alert("Failed to update status");
-    }
-  };
+  const filteredRequests = requests.filter(r => {
+    const matchesStatus = statusFilter === "ALL" || r.status === statusFilter;
+    const searchText = search.toLowerCase();
+    const matchesSearch =
+      r.userName.toLowerCase().includes(searchText) ||
+      r.userEmail.toLowerCase().includes(searchText) ||
+      r.deviceType.toLowerCase().includes(searchText) ||
+      r.brand.toLowerCase().includes(searchText) ||
+      r.model.toLowerCase().includes(searchText);
+    return matchesStatus && matchesSearch;
+  });
 
   return (
-    <div className="container mt-4 pt-5">
-      <h3>All E-Waste Requests (Admin)</h3>
-      <hr />
+    <div className="container-fluid mt-5 pt-5 px-4">
+      {/* Header */}
+      <h3 className="fw-bold mb-3">Admin – E-Waste Requests</h3>
 
-      {error && <div className="alert alert-danger">{error}</div>}
+      {/* Status Tabs */}
+      <ul className="nav nav-pills mb-3 flex-wrap">
+        {STATUS_LIST.map(s => (
+          <li key={s} className="nav-item me-2 mb-2">
+            <button
+              className={`nav-link ${statusFilter === s ? "active" : ""}`}
+              onClick={() => setStatusFilter(s)}
+            >
+              {s}
+            </button>
+          </li>
+        ))}
+      </ul>
 
-      <div className="row">
-        {requests.map((r) => (
-          <div key={r.id} className="col-md-6 mb-4">
-            <div className="card h-100 shadow-sm">
-              <div className="card-body">
+      {/* Search + View toggle */}
+      <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+        <input
+          type="text"
+          className="form-control w-100 w-md-50"
+          placeholder="Search by user, email, device..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
+        <div className="d-flex gap-2">
+          <button
+            className={`btn btn-sm ${view === "card" ? "btn-dark" : "btn-outline-dark"}`}
+            onClick={() => setView("card")}
+          >
+            Card View
+          </button>
+          <button
+            className={`btn btn-sm ${view === "table" ? "btn-dark" : "btn-outline-dark"}`}
+            onClick={() => setView("table")}
+          >
+            Table View
+          </button>
+        </div>
+      </div>
 
-                <h5>{r.deviceType} - {r.brand} {r.model}</h5>
+      {/* Card View */}
+      {view === "card" && (
+  <div className="row g-4">
+    {filteredRequests.map(r => (
+      <div key={r.id} className="col-lg-3 col-md-6">
+        <div className="card shadow-sm border-0 h-100">
 
-                <p>
-                  <strong>User:</strong> {r.userName}<br />
-                  <small>{r.userEmail}</small>
-                </p>
+          <div className="card-header bg-light fw-semibold">
+            {r.deviceType} — {r.brand} {r.model}
+          </div>
 
-                <p><strong>Status:</strong> {r.status}</p>
-                <p><strong>Quantity:</strong> {r.quantity}</p>
-                <p><strong>Pickup Address:</strong> {r.pickupAddress}</p>
+          <div className="card-body small">
+            {/* IMAGE */}
+            <div className="text-center mb-3">
+              {r.imageBase64 ? (
+                <img
+                  src={`data:image/*;base64,${r.imageBase64}`}
+                  alt="E-waste"
+                  className="img-fluid rounded shadow-sm"
+                  style={{ maxHeight: "160px", objectFit: "cover", cursor: "pointer" }}
+                  onClick={() => setModalImage(r.imageBase64)}
+                />
+              ) : (
+                <div
+                  className="bg-light rounded d-flex align-items-center justify-content-center"
+                  style={{ height: "160px" }}
+                >
+                  <span className="text-muted small">No Image</span>
+                </div>
+              )}
+            </div>
 
-                {/* 🔒 CONTROLLED STATUS DROPDOWN */}
-                {STATUS_FLOW[r.status] && (
-                  <select
-                    className="form-select mt-2"
-                    defaultValue=""
-                    onChange={(e) =>
-                      updateStatus(r.id, e.target.value)
-                    }
-                  >
-                    <option value="">Update Status</option>
-                    {STATUS_FLOW[r.status].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
-                )}
+            {/* DETAILS */}
+            <div className="row mb-2">
+              <div className="col-4 text-muted">User</div>
+              <div className="col-8 fw-semibold">{r.userName}</div>
+            </div>
 
-                {r.pickupPerson && (
-                  <p className="mt-2">
-                    <strong>Pickup Person:</strong> {r.pickupPerson.name}<br />
-                    <small>{r.pickupPerson.email}</small>
-                  </p>
-                )}
+            <div className="row mb-2">
+              <div className="col-4 text-muted">Email</div>
+              <div className="col-8">{r.userEmail}</div>
+            </div>
 
-                {r.imageBase64 && (
-                  <img
-                    src={`data:image/*;base64,${r.imageBase64}`}
-                    className="img-fluid rounded mt-2"
-                    style={{ maxHeight: 200 }}
-                  />
-                )}
+            <div className="row mb-2">
+              <div className="col-4 text-muted">Quantity</div>
+              <div className="col-8">{r.quantity}</div>
+            </div>
 
-                {/* ✅ ASSIGN ONLY AFTER APPROVAL */}
-                {r.status === "APPROVED" && (
-                  <Link
-                    to={`/admin/assign/${r.id}`}
-                    className="btn btn-success btn-sm mt-3"
-                  >
-                    Assign Pickup
-                  </Link>
-                )}
-
+            <div className="row mb-2">
+              <div className="col-4 text-muted">Status</div>
+              <div className="col-8">
+                <span className={`badge bg-${statusColor[r.status]}`}>
+                  {r.status}
+                </span>
               </div>
             </div>
+
+            {STATUS_FLOW[r.status] && (
+              <select
+                className="form-select form-select-sm mt-2"
+                defaultValue=""
+                onChange={e => updateStatus(r.id, e.target.value)}
+              >
+                <option value="">Update Status</option>
+                {STATUS_FLOW[r.status].map(s => (
+                  <option key={s}>{s}</option>
+                ))}
+              </select>
+            )}
+
+            {r.status === "APPROVED" && (
+              <Link
+                to={`/admin/assign/${r.id}`}
+                className="btn btn-success btn-sm w-100 mt-3"
+              >
+                Assign Pickup
+              </Link>
+            )}
           </div>
-        ))}
+        </div>
       </div>
+    ))}
+  </div>
+)}
+
+      {/* Table View */}
+      {view === "table" && (
+        <div className="table-responsive">
+          <table className="table table-bordered align-middle">
+            <thead className="table-dark">
+              <tr>
+                <th>User</th>
+                <th>Device</th>
+                <th>Qty</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredRequests.map(r => (
+                <tr key={r.id}>
+                  <td>
+                    {r.userName} <br />
+                    <small className="text-muted">{r.userEmail}</small>
+                  </td>
+                  <td>{r.deviceType} - {r.brand}</td>
+                  <td>{r.quantity}</td>
+                  <td>
+                    <span className={`badge bg-${statusColor[r.status]}`}>
+                      {r.status}
+                    </span>
+                  </td>
+                  <td>
+                    {STATUS_FLOW[r.status] && (
+                      <select
+                        className="form-select form-select-sm"
+                        onChange={e => updateStatus(r.id, e.target.value)}
+                      >
+                        <option>Update</option>
+                        {STATUS_FLOW[r.status].map(s => (
+                          <option key={s}>{s}</option>
+                        ))}
+                      </select>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+
+      {/* Image Modal */}
+      {modalImage && (
+        <div
+          className="modal show d-block"
+          tabIndex="-1"
+          onClick={() => setModalImage(null)}
+          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+        >
+          <div
+            className="modal-dialog modal-dialog-centered"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="modal-content bg-transparent border-0">
+              <img
+                src={`data:image/*;base64,${modalImage}`}
+                alt="Preview"
+                className="img-fluid rounded"
+              />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Footer spacing */}
+      <div className="mb-5"></div>
     </div>
   );
 }

@@ -1,11 +1,11 @@
 
-
 import { useEffect, useState } from "react";
 import api from "../api/axiosConfig";
 
 function MyPickups() {
   const [pickups, setPickups] = useState([]);
   const [error, setError] = useState("");
+  const [previewImage, setPreviewImage] = useState(null);
 
   useEffect(() => {
     fetchPickups();
@@ -14,7 +14,6 @@ function MyPickups() {
   const fetchPickups = async () => {
     try {
       const res = await api.get("/api/pickup/ewaste/my-pickups");
-       //setRequests(res.data.slice().reverse());
       setPickups(res.data.slice().reverse());
     } catch {
       setError("Failed to load pickups");
@@ -30,64 +29,118 @@ function MyPickups() {
     }
   };
 
+  const statusColor = {
+    SCHEDULED: "bg-warning text-dark",
+    PICKED: "bg-primary",
+    COMPLETED: "bg-success"
+  };
+
   return (
-    <div className="container mt-4 pt-5">
-      <h3>My Assigned Pickups</h3>
-      <hr />
+    <div className="container-fluid" style={{ paddingTop: "80px", paddingBottom: "60px" }}>
+      
+      {/* Header */}
+      <div className="mb-4 text-center">
+        <h3 className="fw-bold">🚚 My Assigned Pickups</h3>
+        <p className="text-muted mb-0">View and manage your e-waste pickups</p>
+        <hr />
+      </div>
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      <div className="row">
+      <div className="row g-4">
         {pickups.map(p => (
-          <div key={p.id} className="col-md-6 mb-4">
-            <div className="card shadow-sm h-100">
-              <div className="card-body">
+          <div key={p.id} className="col-xl-4 col-lg-6 col-md-12">
+            <div className="card shadow-sm border-0 h-100">
 
-                <h5 className="card-title">
-                  {p.deviceType} - {p.brand} {p.model}
-                </h5>
+              {/* IMAGE */}
+              {p.imageBase64 ? (
+                <img
+                  src={`data:image/*;base64,${p.imageBase64}`}
+                  alt="ewaste"
+                  className="img-fluid rounded-top"
+                  style={{
+                    height: "220px",
+                    objectFit: "cover",
+                    cursor: "pointer"
+                  }}
+                  onClick={() => setPreviewImage(`data:image/*;base64,${p.imageBase64}`)}
+                />
+              ) : (
+                <div
+                  className="bg-light rounded-top d-flex justify-content-center align-items-center"
+                  style={{ height: "220px" }}
+                >
+                  <span className="text-muted small">No Image</span>
+                </div>
+              )}
 
-                <p>
-                  <strong>User:</strong> {p.userName}<br />
-                  <small className="text-muted">{p.userEmail}</small><br />
-                  <small className="text-muted">📞 {p.userPhone}</small>
-                </p>
+              <div className="card-body small">
 
-                <p><strong>Address:</strong> {p.pickupAddress}</p>
-                <p><strong>Quantity:</strong> {p.quantity}</p>
-                <p><strong>Condition:</strong> {p.condition}</p>
+                {/* HEADER */}
+                <div className="d-flex justify-content-between align-items-start mb-2">
+                  <h6 className="fw-semibold mb-0">
+                    {p.deviceType} — {p.brand} {p.model}
+                  </h6>
+                  <span className={`badge ${statusColor[p.status]}`}>
+                    {p.status}
+                  </span>
+                </div>
 
-                <p>
-                  <strong>Pickup:</strong><br />
-                  {p.pickupDate?.split("T")[0]} 
-                </p>
-                <p>
-                    <strong>Pickup Time:</strong><br/>
-                    {p.pickupTimeSlot}
-                </p>
+                <hr />
 
-                <p><strong>Assigned Staff:</strong> {p.assignedStaff}</p>
+                {/* DETAILS GRID */}
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">👤 User</div>
+                  <div className="col-7 fw-semibold">{p.userName}</div>
+                </div>
 
-                <p>
-                  <strong>Status:</strong>{" "}
-                  <span className="badge bg-info">{p.status}</span>
-                </p>
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">📧 Email</div>
+                  <div className="col-7">{p.userEmail}</div>
+                </div>
 
-                {p.imageBase64 && (
-                  <img
-                    src={`data:image/*;base64,${p.imageBase64}`}
-                    alt="ewaste"
-                    className="img-fluid rounded mt-2"
-                    style={{ maxHeight: "200px" }}
-                  />
-                )}
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">📞 Phone</div>
+                  <div className="col-7">{p.userPhone}</div>
+                </div>
 
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">📍 Address</div>
+                  <div className="col-7">{p.pickupAddress}</div>
+                </div>
+
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">📦 Quantity</div>
+                  <div className="col-7">{p.quantity}</div>
+                </div>
+
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">⚙ Condition</div>
+                  <div className="col-7">{p.condition}</div>
+                </div>
+
+                <div className="row mb-2">
+                  <div className="col-5 text-muted">📅 Date</div>
+                  <div className="col-7">{p.pickupDate?.split("T")[0]}</div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-5 text-muted">⏰ Time</div>
+                  <div className="col-7">{p.pickupTimeSlot}</div>
+                </div>
+
+                <div className="row mb-3">
+                  <div className="col-5 text-muted">🧑‍🔧 Staff</div>
+                  <div className="col-7">{p.assignedStaff}</div>
+                </div>
+
+                {/* ACTION */}
                 {p.status === "SCHEDULED" && (
                   <button
-                    className="btn btn-success btn-sm mt-3"
+                    className="btn btn-success btn-sm w-100"
                     onClick={() => markPicked(p.id)}
                   >
-                    Mark Picked
+                    ✅ Mark as Picked
                   </button>
                 )}
 
@@ -96,6 +149,25 @@ function MyPickups() {
           </div>
         ))}
       </div>
+
+      {/* IMAGE MODAL */}
+      {previewImage && (
+        <div
+          className="modal fade show d-block"
+          style={{ backgroundColor: "rgba(0,0,0,0.7)" }}
+          onClick={() => setPreviewImage(null)}
+        >
+          <div className="modal-dialog modal-lg modal-dialog-centered" onClick={e => e.stopPropagation()}>
+            <div className="modal-content border-0 bg-transparent p-0">
+              <img
+                src={previewImage}
+                alt="preview"
+                className="img-fluid w-100 rounded"
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
