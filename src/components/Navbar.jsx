@@ -243,6 +243,7 @@ function Navbar() {
               <>
                 <Link className="nav-link" to="/admin">Dashboard</Link>
                 <Link className="nav-link" to="/admin/requests">Requests</Link>
+                 <Link className="nav-link" to="/admin/add-pickup">Add Pickup Person</Link>
               </>
             )}
 

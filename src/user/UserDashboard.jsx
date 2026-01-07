@@ -20,7 +20,10 @@ function StatusCard({ title, value, color, icon }) {
 }
 
 
+
 function UserDashboard() {
+
+  const [user, setUser] = useState(null);
 
   const [stats, setStats] = useState({
     TOTAL:0,
@@ -57,7 +60,15 @@ useEffect(() => {
       console.error("Failed to load dashboard stats");
     }
   };
-
+  const fetchUser = async () => {
+    try {
+      const res = await api.get("/api/ewaste/me"); // adjust path if needed
+      setUser(res.data);
+    } catch (err) {
+      console.error("Failed to load user profile");
+    }
+  };
+   fetchUser();
   fetchStats();
 }, []);
 
@@ -69,7 +80,7 @@ useEffect(() => {
 
       <div className="d-flex justify-content-center mt-4 mb-5">
   <div className="text-center" style={{ maxWidth: "600px" }}>
-    <h2 className="fw-bold">Welcome 👋</h2>
+    <h2 className="fw-bold">Welcome {user && `, ${user.name}`}👋</h2>
     <p className="text-muted mb-2">
       Manage your e-waste requests and track pickup status
     </p>

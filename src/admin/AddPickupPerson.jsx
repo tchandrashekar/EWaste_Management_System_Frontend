@@ -1,8 +1,72 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+
+/*import { useState } from "react";
 import api from "../api/axiosConfig";
 
-function Register() {
+function AddPickupPerson() {
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    password: "",
+    phone: ""
+  });
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
+
+  const handleChange = e =>
+    setForm({ ...form, [e.target.name]: e.target.value });
+
+  const submit = async e => {
+    e.preventDefault();
+    setErr(""); setMsg("");
+
+    try {
+      await api.post("/api/admin/pickup/create", form);
+      setMsg("Pickup person created successfully");
+      setForm({ name:"", email:"", password:"", phone:"" });
+    } catch (error) {
+      setErr(error.response?.data || "Creation failed");
+    }
+  };
+
+  return (
+    <div className="container mt-4" style={{ maxWidth: 500 }}>
+      <h3>Add Pickup Person</h3>
+      <hr />
+
+      {msg && <div className="alert alert-success">{msg}</div>}
+      {err && <div className="alert alert-danger">{err}</div>}
+
+      <form onSubmit={submit}>
+        <input className="form-control mb-2"
+          name="name" placeholder="Name"
+          value={form.name} onChange={handleChange} required />
+
+        <input className="form-control mb-2"
+          name="email" placeholder="Email"
+          value={form.email} onChange={handleChange} required />
+
+        <input type="password" className="form-control mb-2"
+          name="password" placeholder="Password"
+          value={form.password} onChange={handleChange} required />
+
+        <input className="form-control mb-2"
+          name="phone" placeholder="Phone"
+          value={form.phone} onChange={handleChange} />
+
+        <button className="btn btn-primary w-100">
+          Create Pickup Person
+        </button>
+      </form>
+    </div>
+  );
+}
+
+export default AddPickupPerson;
+*/
+import { useState } from "react";
+import api from "../api/axiosConfig";
+
+function AddPickupPerson() {
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -10,59 +74,58 @@ function Register() {
     phone: ""
   });
 
-  const [message, setMessage] = useState("");
-  const [error, setError] = useState("");
+  const [msg, setMsg] = useState("");
+  const [err, setErr] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const navigate = useNavigate();
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const handleRegister = async (e) => {
+  const submit = async (e) => {
     e.preventDefault();
-    setError("");
-    setMessage("");
+    setErr("");
+    setMsg("");
 
     try {
-      const res = await api.post("/api/auth/register", form);
-      setMessage(res.data);
-      setTimeout(() => navigate("/"), 2000);
-    } catch (err) {
-      setError(err.response?.data || "Registration failed");
+      await api.post("/api/admin/ewaste/create", form);
+      setMsg("Pickup person created successfully");
+      setForm({ name: "", email: "", password: "", phone: "" });
+    } catch (error) {
+      setErr(error.response?.data || "Creation failed");
     }
   };
 
   return (
     <div
-      className="container-fluid d-flex justify-content-center align-items-center"
-      style={{ minHeight: "90vh", paddingTop: "90px", paddingBottom: "60px" }}
+      className="container-fluid d-flex justify-content-center"
+      style={{ marginTop: "90px", marginBottom: "70px" }}
     >
       <div
         className="card shadow-lg border-0 p-4"
-        style={{ maxWidth: "460px", width: "100%" }}
+        style={{ maxWidth: "520px", width: "100%" }}
       >
         {/* HEADER */}
         <div className="text-center mb-4">
-          <h4 className="fw-bold mb-1">📝 User Registration</h4>
+          <h4 className="fw-bold mb-1">➕ Add Pickup Person</h4>
           <p className="text-muted mb-0">
-            Create your e-waste management account
+            Create and manage pickup staff accounts
           </p>
         </div>
 
         {/* ALERTS */}
-        {message && (
+        {msg && (
           <div className="alert alert-success text-center py-2">
-            {message}
+            {msg}
           </div>
         )}
-        {error && (
+        {err && (
           <div className="alert alert-danger text-center py-2">
-            {error}
+            {err}
           </div>
         )}
 
         {/* FORM */}
-        <form onSubmit={handleRegister}>
+        <form onSubmit={submit}>
           {/* NAME */}
           <div className="mb-3">
             <label className="form-label fw-semibold">Full Name</label>
@@ -136,21 +199,13 @@ function Register() {
           </div>
 
           {/* BUTTON */}
-          <button className="btn btn-success w-100 fw-semibold py-2">
-            Register
+          <button className="btn btn-primary w-100 fw-semibold py-2">
+            Create Pickup Person
           </button>
         </form>
-
-        {/* FOOTER */}
-        <p className="text-center mt-4 mb-0">
-          Already registered?{" "}
-          <Link to="/" className="fw-semibold text-decoration-underline">
-            Login
-          </Link>
-        </p>
       </div>
     </div>
   );
 }
 
-export default Register;
+export default AddPickupPerson;

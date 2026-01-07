@@ -15,6 +15,7 @@ import AssignPickup from './admin/AssignPickup'
 import MyPickups from './pick-up/MyPickups'
 import Navbar from './components/Navbar'
 import Footer from './components/Footer'
+import AddPickupPerson from './admin/AddPickupPerson'
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/admin" element={<AdminDashboard/>} />
         <Route path="/admin/requests" element={<AdminRequests />} />
          <Route path="/admin/assign/:id" element={<AssignPickup />} />
+         <Route path="/admin/add-pickup"element={<AddPickupPerson />}/>
 
         <Route path="/user" element={<UserDashboard/>} />
         <Route path="/user/create-request" element={<CreateRequest/>} />
