@@ -26,13 +26,36 @@ function Register() {
     setError("");
     setMessage("");
     setLoading(true);
-
+/*
     try {
       const res = await api.post("/api/auth/register", form);
       setMessage(res.data);
       setTimeout(() => navigate("/"), 2000);
     } catch (err) {
       setError(err.response?.data || "Registration failed");
+    } finally {
+      setLoading(false);
+    }
+      */
+     try {
+      const res = await api.post("/api/auth/register", form);
+
+      // Make sure res.data is a string
+      setMessage(
+        typeof res.data === "string" ? res.data : res.data.message || "Registered successfully"
+      );
+
+      // Redirect after 2 seconds
+      setTimeout(() => navigate("/"), 2000);
+    } catch (err) {
+      // Safely handle object or string errors
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.response?.data) {
+        setError(JSON.stringify(err.response.data));
+      } else {
+        setError("Registration failed");
+      }
     } finally {
       setLoading(false);
     }
