@@ -31,7 +31,14 @@ function Login() {
       else if (role === "PICKUP") navigate("/pickup");
 
     } catch (err) {
-      setError(err.response?.data || "Invalid email or password");
+      //setError(err.response?.data || "Invalid email or password");
+      if (err.response?.data?.error) {
+        setError(err.response.data.error);
+      } else if (err.response?.data) {
+        setError(JSON.stringify(err.response.data));
+      } else {
+        setError("Invalid email or password");
+      }
     } finally {
       setLoading(false);
     }
